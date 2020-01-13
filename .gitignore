@@ -3,15 +3,15 @@
 /test/
 
 # top level source
-lit-overlay.js
-lit-overlay.js.map
-lit-overlay.d.ts
-lit-overlay.d.ts.map
+wc-overlay.js
+wc-overlay.js.map
+wc-overlay.d.ts
+wc-overlay.d.ts.map
 
-lit-popup.js
-lit-popup.js.map
-lit-popup.d.ts
-lit-popup.d.ts.map
+wc-popup.js
+wc-popup.js.map
+wc-popup.d.ts
+wc-popup.d.ts.map
 
 /src/**/*.js
 /src/**/*.js.map

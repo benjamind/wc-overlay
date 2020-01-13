@@ -1,7 +1,7 @@
 import {customElement} from 'lit-element';
 
 import {createPopupOverlay} from './lib/create-popup';
-import {LitOverlay} from './lit-overlay';
+import {LitOverlay} from './wc-overlay';
 
 /**
  * An example element.
@@ -9,8 +9,11 @@ import {LitOverlay} from './lit-overlay';
  * @slot - This element has a slot
  * @csspart button - The button
  */
-@customElement('lit-popup')
+@customElement('wc-popup')
 export class LitPopup extends LitOverlay {
+  public triggerOn?: string = 'pointerenter';
+  public triggerOff?: string = 'pointerleave';
+
   protected createOverlay(content: HTMLElement) {
     const overlay = createPopupOverlay(this, {
       relativeTo: this.triggerContainer.assignedNodes()[0] as HTMLElement,
@@ -29,6 +32,6 @@ export class LitPopup extends LitOverlay {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'lit-popup': LitPopup;
+    'wc-popup': LitPopup;
   }
 }

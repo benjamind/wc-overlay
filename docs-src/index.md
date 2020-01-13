@@ -1,73 +1,74 @@
 ---
 layout: page.11ty.cjs
-title: <my-element> ⌲ Home
+title: <wc-overlay> ⌲ Home
 ---
 
-# &lt;my-element>
+# &lt;wc-overlay>
 
-`<my-element>` is an awesome element. It's a great introduction to building web components with LitElement, with nice documentation site as well.
+In `<wc-overlay>` we attempt to provide APIs and web components which can be used to create overlays and popups which work well with ShadowDOM containment.
 
-## As easy as HTML
+A common problem in ShadowDOM is that of encapsulation of displayed content. Say you have a dialog, its size is set such that it does not allow overflow of content, but you want custom tooltips on elements inside the dialog, and you want these to correctly escape the containment of the dialog. `<wc-popup>` and the `createPopup` function help solve this problem.
+
+In `<wc-overlay>` we define an `overlay` as an element which appears above other DOM, potentially being hoisted up through the DOM to some layer where it should be displayed. This is the base building block of the library. We define a `popup` as an overlay, but with the added functionality of positioning said overlay relative to some other element. To achieve this `<wc-overlay>` uses the [`popper.js`](https://popper.js.org/) library.
+
+## <wc-overlay> usage
 
 <section class="columns">
   <div>
-
-`<my-element>` is just an HTML element. You can it anywhere you can use HTML!
+  
+`<wc-overlay>` can be used to hoist an element out of the current location in the DOM up to another location in the DOM (by default, `document.body`):
 
 ```html
-<my-element></my-element>
+<div style="overflow: hidden; width: 300px; height: 200px">
+  <wc-overlay trigger-on="click" close-on="click">
+    <button slot="trigger">Open Overlay</button>
+    <div
+      style="width: 500px; height: 500px; font-size: 50px; background-color: beige; border: 1px solid black"
+    >
+      Click me to close!
+    </div>
+  </wc-overlay>
+</div>
 ```
 
   </div>
   <div>
 
-<my-element></my-element>
+  <div style="overflow: hidden; width: 300px; height: 200px">
+    <wc-overlay trigger-on="click" close-on="click">
+      <button slot="trigger">Open Overlay</button>
+      <div
+        style="width: 500px; height: 500px; font-size: 50px; background-color: beige; border: 1px solid black; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"
+      >
+        Click me to close!
+      </div>
+    </wc-overlay>
+  </div>
 
   </div>
 </section>
 
-## Configure with attributes
+## <wc-popup> usage
 
 <section class="columns">
   <div>
 
-`<my-element>` can be configured with attributed in plain HTML.
+`<wc-popup>` can be used to show a popup when a trigger element emits a specific event, by default it uses `pointerenter` and `pointerleave` to create hover popup behavior:
 
 ```html
-<my-element name="HTML"></my-element>
+<wc-popup>
+  <button slot="trigger">Open</button>
+  <div>My cool content on hover</div>
+</wc-popup>
 ```
 
   </div>
   <div>
 
-<my-element name="HTML"></my-element>
-
-  </div>
-</section>
-
-## Declarative rendering
-
-<section class="columns">
-  <div>
-
-`<my-element>` can be used with declarative rendering libraries like Angular, React, Vue, and lit-html
-
-```js
-import {html, render} from 'lit-html';
-
-const name="lit-html";
-
-render(html`
-  <h2>This is a &lt;my-element&gt;</h2>
-  <my-element .name=${name}></my-element>
-`, document.body);
-```
-
-  </div>
-  <div>
-
-<h2>This is a &lt;my-element&gt;</h2>
-<my-element name="lit-html"></my-element>
+<wc-popup>
+  <button slot="trigger">Open</button>
+  <div>My cool content on hover</div>
+</wc-popup>
 
   </div>
 </section>

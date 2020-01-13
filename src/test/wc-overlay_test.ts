@@ -1,11 +1,11 @@
-import {LitOverlay} from '../lit-overlay.js';
+import {LitOverlay} from '../wc-overlay.js';
 // import {fixture, html} from '@open-wc/testing';
 
 const assert = chai.assert;
 
-suite('my-element', () => {
+suite('wc-overlay', () => {
   test('is defined', () => {
-    const el = document.createElement('lit-overlay');
+    const el = document.createElement('wc-overlay');
     assert.instanceOf(el, LitOverlay);
   });
   /*

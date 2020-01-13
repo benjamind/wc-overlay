@@ -1,13 +1,17 @@
-# LitElement TypeScript starter
+# wc-overlay
 
-This project includes a sample component using LitElement with TypeScript.
+With `<wc-overlay>` we attempt to provide APIs and web components which can be used to create overlays and popups which work well with ShadowDOM containment.
+
+A common problem in ShadowDOM is that of encapsulation of displayed content. Say you have a dialog, its size is set such that it does not allow overflow of content, but you want custom tooltips on elements inside the dialog, and you want these to correctly escape the containment of the dialog. `<wc-popup>` and the `createPopup` function help solve this problem.
+
+In `<wc-overlay>` we define an `overlay` as an element which appears above other DOM, potentially being hoisted up through the DOM to some layer where it should be displayed. This is the base building block of the library. We define a `popup` as an overlay, but with the added functionality of positioning said overlay relative to some other element. To achieve this `<wc-overlay>` uses the [`popper.js`](https://popper.js.org/) library.
 
 ## Setup
 
 Install dependencies:
 
 ```bash
-npm i
+npm i wc-overlay
 ```
 
 ## Build
@@ -40,7 +44,7 @@ npm test
 
 ## Dev Server
 
-This sample uses open-wc's [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) for previewing the project without additional build steps. ES dev server handles resolving Node-style "bare" import specifiers, which aren't supported in browsers. It also automatically transpiles JavaScript and adds polyfills to support older browsers.
+This project uses open-wc's [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) for previewing the project without additional build steps. ES dev server handles resolving Node-style "bare" import specifiers, which aren't supported in browsers. It also automatically transpiles JavaScript and adds polyfills to support older browsers.
 
 To run the dev server and open the project in a new browser tab:
 
@@ -107,69 +111,3 @@ npm run docs:watch
 ```
 
 The site will usually be served at http://localhost:8000.
-
-## More information
-
-See [Get started](https://lit-element.polymer-project.org/guide/start) on the LitElement site for more information.
-
-# Goals
-
-Create a declarative and imperative API for 'promoting' elements from deep in a ShadowDOM.
-
-# Declarative API
-
-- Trigger promotion based on an arbitrary event name from child content.
-- Allow specific elements to be targetted as triggers
-- Promote to document.body by default, but allow customization through DOM hierarchy or property
-- Support a background mask 1 level behind the overlay, this can be used for triggering close behavior
-- Allow custom mask element
-- Allow dismissal from event from content, trigger, or mask
-
-```html
-<lit-overlay
-  trigger-open="click"
-  trigger-close="click"
-  mask
-  mask-close="click"
-  content-close="my-dialog-close"
-  target="dialogs-container"
->
-  <my-dialog></my-dialog>
-</lit-overlay
-```
-
-# Tooltips
-
-Creating tooltips for ShadowDOM is awkward, needs promotion to higher layers, and also needs position management.
-
-Suggest use of `@popperjs/core` to give this capability, as peer dependency.
-
-- Make use of imperative overlay promotion API to promote a tooltip element and then use popper to position it.
-- Close when trigger element pointer-out event
-- Support 'arrow' slot to contain custom arrow content, if required
-- Can also use ::parts API to style and use before/after pseudo selectors
-- Support 'content' slot to contain HTML content that will be shown in the tooltip
-- Remaining content remains in document flow and is unaffected by tooltip element, display:content
-
-```html
-<lit-tooltip>
-  <div slot="content">Tooltip <b>text</b> with arbitrary html!</div>
-  <button>My cool button</button>
-</lit-tooltip>
-
-<lit-tooltip tip="A simple tooltip">
-  <button>My cool button</button>
-</lit-tooltip>
-```
-
-Actual tooltip will be rendered as a `lit-tip` element unless another element is specified:
-
-```html
-<lit-tip>
-  # shadow
-  <div id="arrow"><slot name="arrow"></slot></div>
-  <div id="content"><slot></slot></div>
-</lit-tip>
-```
-
-Custom elements will be expected to support the same slots.

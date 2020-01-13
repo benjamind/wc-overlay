@@ -43,7 +43,7 @@ export function createOverlay(
 ): Overlay | undefined {
   const overlayDetail = {triggerEvent, content, target, targetName};
 
-  const overlayOpenEvent = new CustomEvent<OverlayDetail>('lit-overlay-open', {
+  const overlayOpenEvent = new CustomEvent<OverlayDetail>('wc-overlay-open', {
     bubbles: true,
     composed: true,
     detail: overlayDetail,
@@ -71,7 +71,7 @@ export function createOverlay(
     placeholder,
     close: () => {
       content.dispatchEvent(
-        new CustomEvent<OverlayDetail>('lit-overlay-close', {
+        new CustomEvent<OverlayDetail>('wc-overlay-close', {
           bubbles: true,
           composed: true,
           detail: overlayDetail,

@@ -1,20 +1,21 @@
 {
-  "name": "lit-overlay",
+  "name": "wc-overlay",
   "version": "0.0.0",
   "description": "An experiment in overlay and popup management in web components",
-  "main": "my-element.js",
-  "module": "my-element.js",
+  "main": "index.js",
+  "module": "index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc --watch",
-    "build:dev": "cd dev && tsc --watch",
+    "build:dev": "cd dev && tsc",
+    "build:dev-watch": "cd dev && tsc --watch",
+    "build:watch": "tsc --watch & npm run build:dev-watch",
     "lint": "lit-analyzer && eslint 'src/**/*.ts'",
     "format": "prettier src/* --write",
     "docs": "npm run build && npm run analyze && npm run docs:build && npm run docs:assets && npm run docs:gen",
     "docs:gen": "eleventy --config=.eleventy.cjs",
     "docs:gen:watch": "eleventy --config=.eleventy.cjs --watch",
-    "docs:build": "rollup -c --file docs/my-element.bundled.js",
+    "docs:build": "rollup -c --file docs/wc-overlay.bundled.js",
     "docs:assets": "cp node_modules/prismjs/themes/prism-okaidia.css docs/",
     "docs:serve": "es-dev-server --root-dir=docs",
     "analyze": "wca analyze \"src/**/*.ts\" --outFile custom-elements.json",
@@ -23,7 +24,7 @@
     "test:watch": "karma start karma.conf.cjs --auto-watch=true --single-run=false",
     "test:update-snapshots": "karma start karma.conf.cjs --update-snapshots",
     "test:prune-snapshots": "karma start karma.conf.cjs --prune-snapshots",
-    "checksize": "rollup -c ; cat my-element.bundled.js | gzip -9 | wc -c ; rm my-element.bundled.js"
+    "checksize": "rollup -c ; cat wc-overlay.bundled.js | gzip -9 | wc -c ; rm wc-overlay.bundled.js"
   },
   "keywords": [
     "web component",

@@ -2,36 +2,106 @@
   "version": "experimental",
   "tags": [
     {
-      "name": "my-element",
+      "name": "wc-overlay",
       "description": "An example element.",
       "attributes": [
         {
-          "name": "name",
-          "description": "The name to say \"Hello\" to.",
-          "type": "string",
-          "default": "\"World\""
+          "name": "open",
+          "type": "boolean"
         },
         {
-          "name": "count",
-          "description": "The number of times the button has been clicked.",
-          "type": "number",
-          "default": "0"
+          "name": "trigger-on",
+          "type": "string | undefined"
+        },
+        {
+          "name": "trigger-off",
+          "type": "string | undefined"
+        },
+        {
+          "name": "close-on",
+          "type": "string | undefined"
         }
       ],
       "properties": [
         {
-          "name": "name",
-          "attribute": "name",
-          "description": "The name to say \"Hello\" to.",
-          "type": "string",
-          "default": "\"World\""
+          "name": "open",
+          "attribute": "open",
+          "type": "boolean"
         },
         {
-          "name": "count",
-          "attribute": "count",
-          "description": "The number of times the button has been clicked.",
-          "type": "number",
-          "default": "0"
+          "name": "triggerOn",
+          "attribute": "trigger-on",
+          "type": "string | undefined"
+        },
+        {
+          "name": "triggerOff",
+          "attribute": "trigger-off",
+          "type": "string | undefined"
+        },
+        {
+          "name": "closeOn",
+          "attribute": "close-on",
+          "type": "string | undefined"
+        }
+      ],
+      "slots": [
+        {
+          "name": "",
+          "description": "This element has a slot"
+        }
+      ],
+      "cssParts": [
+        {
+          "name": "button",
+          "description": "The button"
+        }
+      ]
+    },
+    {
+      "name": "wc-popup",
+      "description": "An example element.",
+      "attributes": [
+        {
+          "name": "open",
+          "type": "boolean"
+        },
+        {
+          "name": "trigger-on",
+          "type": "string | undefined",
+          "default": "\"pointerenter\""
+        },
+        {
+          "name": "trigger-off",
+          "type": "string | undefined",
+          "default": "\"pointerleave\""
+        },
+        {
+          "name": "close-on",
+          "type": "string | undefined"
+        }
+      ],
+      "properties": [
+        {
+          "name": "open",
+          "attribute": "open",
+          "type": "boolean"
+        },
+        {
+          "name": "triggerOn",
+          "attribute": "trigger-on",
+          "type": "string | undefined",
+          "default": "\"pointerenter\""
+        },
+        {
+          "name": "triggerOff",
+          "attribute": "trigger-off",
+          "type": "string | undefined",
+          "default": "\"pointerleave\""
+        },
+        {
+          "name": "closeOn",
+          "attribute": "close-on",
+          "type": "string | undefined"
         }
       ],
       "slots": [

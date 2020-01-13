@@ -14,7 +14,7 @@ import {createOverlay, Overlay} from './lib/create-overlay';
  * @slot - This element has a slot
  * @csspart button - The button
  */
-@customElement('lit-overlay')
+@customElement('wc-overlay')
 export class LitOverlay extends LitElement {
   static styles = css`
     :host {
@@ -31,7 +31,7 @@ export class LitOverlay extends LitElement {
   public set open(value: boolean) {
     if (!this._open && value) {
       this.openOverlay();
-    } else {
+    } else if (this.open && !value) {
       this.closeOverlay();
     }
 
@@ -49,9 +49,6 @@ export class LitOverlay extends LitElement {
 
   @property({reflect: true, type: String, attribute: 'close-on'})
   public closeOn?: string;
-
-  @property({reflect: true, type: Boolean})
-  public mask: boolean = false;
 
   @query('#trig')
   protected triggerContainer!: HTMLSlotElement;
@@ -84,6 +81,9 @@ export class LitOverlay extends LitElement {
   }
 
   private onTriggerOn = (ev: Event) => {
+    if (this.open) {
+      return;
+    }
     this.triggerEvent = ev;
     this.open = true;
   };
@@ -105,6 +105,10 @@ export class LitOverlay extends LitElement {
   }
 
   private onTriggerOff = (ev: Event) => {
+    // if we're not open, or the event was already handled by the on trigger, do nothing
+    if (!this.open || ev === this.triggerEvent) {
+      return;
+    }
     if (
       (ev.type === 'pointerleave' || ev.type === 'pointerout') &&
       this.pointerRemainsInOverlay(ev as PointerEvent)
@@ -152,21 +156,6 @@ export class LitOverlay extends LitElement {
     ) {
       this.overlay.content.addEventListener(this.triggerOff, this.onTriggerOff);
     }
-    // track pointer over overlay state
-    /*this.overlay.content.addEventListener('pointerenter', () => {
-      this.pointerOverOverlay = true;
-      content.addEventListener(
-        'pointerleave',
-        (ev) => {
-          this.pointerOverOverlay = false;
-          if (this.pendingClose) {
-            this.triggerEvent = ev;
-            this.open = false;
-          }
-        },
-        {once: true}
-      );
-    });*/
 
     if (this.closeOn) {
       this.overlay.content.addEventListener(
@@ -203,6 +192,6 @@ export class LitOverlay extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'lit-overlay': LitOverlay;
+    'wc-overlay': LitOverlay;
   }
 }

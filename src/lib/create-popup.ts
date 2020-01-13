@@ -24,10 +24,10 @@ export function createPopupOverlay(
     return;
   }
   const popper = createPopper(opts.relativeTo, overlay?.content, opts.popper);
-  overlay.content.addEventListener('lit-overlay-close', () => {
+  overlay.content.addEventListener('wc-overlay-close', () => {
     popper.destroy();
   });
-  overlay.content.addEventListener('lit-overlay-update', () => {
+  overlay.content.addEventListener('wc-overlay-update', () => {
     popper.forceUpdate();
   });
   return overlay;
