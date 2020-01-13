@@ -1,0 +1,24 @@
+/node_modules/
+/lib/
+/test/
+
+# top level source
+lit-overlay.js
+lit-overlay.js.map
+lit-overlay.d.ts
+lit-overlay.d.ts.map
+
+lit-popup.js
+lit-popup.js.map
+lit-popup.d.ts
+lit-popup.d.ts.map
+
+/src/**/*.js
+/src/**/*.js.map
+/src/**/*.d.ts
+/src/**/*.d.ts.map
+
+/dev/**/*.js
+/dev/**/*.js.map
+/dev/**/*.d.ts
+/dev/**/*.d.ts.map

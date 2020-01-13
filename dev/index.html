@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>&lt;lit-overlay> Demo</title>
+    <script type="module" src="../lit-overlay.js"></script>
+    <script type="module" src="../lit-popup.js"></script>
+    <script type="module" src="example-dialog.js"></script>
+    <style>
+      #container {
+        width: 300px;
+        height: 300px;
+        border: 1px solid black;
+      }
+
+      #body {
+        display: flex;
+        background: #333;
+        width: 300px;
+        height: 200px;
+        align-items: center;
+        justify-content: center;
+      }
+      #header,
+      #footer {
+        background: #666;
+        width: 300px;
+        height: 50px;
+      }
+      #dialog {
+        display: block;
+        width: 300px;
+        height: 300px;
+        background-color: #ccc;
+        border: 1px solid #999;
+        font-weight: bold;
+      }
+      #tooltip {
+        background-color: beige;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        Header
+      </div>
+      <div id="body">
+        <lit-overlay trigger-on="click" close-on="dialog-close">
+          <example-dialog>A cool dialog widget </example-dialog>
+          <lit-popup
+            slot="trigger"
+            trigger-on="pointerenter"
+            trigger-off="pointerleave"
+          >
+            <button id="overlay-button" slot="trigger">Open Overlay</button>
+            <div id="tooltip">This is a really long tooltip</div>
+          </lit-popup>
+        </lit-overlay>
+        Body content
+      </div>
+      <div id="footer">Footer</div>
+    </div>
+  </body>
+</html>
