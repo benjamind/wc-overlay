@@ -29,12 +29,22 @@ export class OverlayElement extends LitElement {
 
   protected overlay: Overlay;
 
+  private _open = false;
+
   @property({reflect: true, type: Boolean})
   public set open(value: boolean) {
-    this.overlay.open = value;
+    if (value) {
+      this.overlay.open();
+    } else if (!value) {
+      this.overlay.close();
+    }
+    const oldOpen = this._open;
+    this._open = this.overlay.isOpen;
+    this.requestUpdate('open', oldOpen);
   }
+
   public get open(): boolean {
-    return this.overlay.open;
+    return this._open;
   }
 
   @property({reflect: true, attribute: 'trigger-on'})
@@ -73,6 +83,12 @@ export class OverlayElement extends LitElement {
       'wc-overlay-content',
       this.handleContentRequest
     );
+    this.overlay.addEventListener('wc-overlay-opened', () => {
+      this.open = true;
+    });
+    this.overlay.addEventListener('wc-overlay-closed', () => {
+      this.open = false;
+    });
   }
 
   public updated(changedProperties: PropertyValues): void {
@@ -99,7 +115,7 @@ export class OverlayElement extends LitElement {
       maskContent.addEventListener(
         this.maskCloseOn,
         () => {
-          this.overlay.open = false;
+          this.overlay.close();
         },
         {once: true}
       );

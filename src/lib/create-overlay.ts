@@ -14,7 +14,6 @@ function createPlaceholder(element: HTMLElement): Comment {
     'placeholder for ' + element.nodeName
   );
 
-  /* istanbul ignore else */
   if (element.parentElement) {
     element.parentElement.replaceChild(placeholder, element);
   }
@@ -44,17 +43,7 @@ export class Overlay extends EventTarget {
   protected target?: HTMLElement;
 
   private _open = false;
-
-  public set open(value: boolean) {
-    if (!this._open && value) {
-      this.openOverlay();
-    } else if (this.open && !value) {
-      this.closeOverlay();
-    }
-
-    this._open = value;
-  }
-  public get open(): boolean {
+  public get isOpen(): boolean {
     return this._open;
   }
 
@@ -128,18 +117,18 @@ export class Overlay extends EventTarget {
 
   public destroy() {
     // close overlay
-    this.open = false;
+    this.close();
     // cleanup event listeners
     this.removeTriggerListeners();
     this.removeContentListeners();
   }
 
   private onTriggerOn = (ev: Event) => {
-    if (this.open) {
+    if (this._open) {
       return;
     }
     this.triggerEvent = ev;
-    this.open = true;
+    this.open();
   };
 
   private pointerRemainsInOverlay(ev: PointerEvent) {
@@ -179,7 +168,7 @@ export class Overlay extends EventTarget {
       return;
     } else {
       this.triggerEvent = ev;
-      this.open = false;
+      this.close();
     }
   };
 
@@ -221,7 +210,10 @@ export class Overlay extends EventTarget {
     this.target.appendChild(this.overlayContainer);
   }
 
-  protected openOverlay(): HTMLElement | HTMLElement[] | undefined {
+  public open(): HTMLElement | HTMLElement[] | undefined {
+    if (this.isOpen) {
+      return;
+    }
     // fire an event to request the content for our overlay
     const contentQuery: OverlayContentRequestEvent = new CustomEvent(
       'wc-overlay-content',
@@ -241,7 +233,7 @@ export class Overlay extends EventTarget {
 
     if (!content) {
       // can't open an overlay with no content
-      this.open = false;
+      this.close();
       return;
     }
 
@@ -261,6 +253,8 @@ export class Overlay extends EventTarget {
 
     this.createOverlay();
 
+    this._open = true;
+
     const overlayOpenedEvent: OverlayOpenedEvent = new CustomEvent(
       'wc-overlay-opened',
       {
@@ -272,56 +266,58 @@ export class Overlay extends EventTarget {
   }
 
   protected onCloseOn = () => {
-    this.open = false;
+    this.close();
   };
 
-  protected closeOverlay() {
-    if (this.open) {
-      // fire an event to see if we can close
-      const overlayCloseEvent: OverlayCloseEvent = new CustomEvent(
-        'wc-overlay-close',
-        {
-          bubbles: true,
-          composed: true,
-          detail: {overlay: this},
-        }
-      );
-      this.overlayContainer.dispatchEvent(overlayCloseEvent);
-      if (!this.target) {
-        throw new Error('No target for opened overlay?');
-      }
-      // remove the overlay from the stack
-      const stack = getStack(this.target);
-      const index = stack.findIndex((entry) => entry === this);
-      if (index >= 0) {
-        stack.splice(index, 1);
-      }
-
-      // restore the content
-      while (this.overlayContainer.firstChild) {
-        const placeholder = this.placeholders.get(
-          this.overlayContainer.firstChild as HTMLElement
-        );
-        if (!placeholder) {
-          continue;
-        }
-        restorePlaceholder(
-          placeholder,
-          this.overlayContainer.firstChild! as HTMLElement
-        );
-      }
-      this.overlayContainer.parentElement?.removeChild(this.overlayContainer);
-
-      this.triggerEvent = undefined;
-
-      const overlayClosedEvent: OverlayClosedEvent = new CustomEvent(
-        'wc-overlay-closed',
-        {
-          detail: {overlay: this},
-        }
-      );
-      this.dispatchEvent(overlayClosedEvent);
+  public close() {
+    if (!this.isOpen) {
+      return;
     }
+    // fire an event to see if we can close
+    const overlayCloseEvent: OverlayCloseEvent = new CustomEvent(
+      'wc-overlay-close',
+      {
+        bubbles: true,
+        composed: true,
+        detail: {overlay: this},
+      }
+    );
+    this.overlayContainer.dispatchEvent(overlayCloseEvent);
+    if (!this.target) {
+      throw new Error('No target for opened overlay?');
+    }
+    // remove the overlay from the stack
+    const stack = getStack(this.target);
+    const index = stack.findIndex((entry) => entry === this);
+    if (index >= 0) {
+      stack.splice(index, 1);
+    }
+
+    // restore the content
+    while (this.overlayContainer.firstChild) {
+      const placeholder = this.placeholders.get(
+        this.overlayContainer.firstChild as HTMLElement
+      );
+      if (!placeholder) {
+        continue;
+      }
+      restorePlaceholder(
+        placeholder,
+        this.overlayContainer.firstChild! as HTMLElement
+      );
+    }
+    this.overlayContainer.parentElement?.removeChild(this.overlayContainer);
+
+    this.triggerEvent = undefined;
+    this._open = false;
+
+    const overlayClosedEvent: OverlayClosedEvent = new CustomEvent(
+      'wc-overlay-closed',
+      {
+        detail: {overlay: this},
+      }
+    );
+    this.dispatchEvent(overlayClosedEvent);
   }
 }
 

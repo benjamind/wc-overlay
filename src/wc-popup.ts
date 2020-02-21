@@ -8,13 +8,12 @@ import {
   PropertyValues,
 } from 'lit-element';
 
-//import { PopupOverlay } from './lib/create-popup';
 import {
   Overlay,
   OverlayContentRequestEvent,
   OverlayOpenEvent,
 } from './lib/create-overlay';
-import {createPopper, Instance, Modifier, State} from '@popperjs/core';
+import {createPopper, Instance, Modifier} from '@popperjs/core';
 
 /**
  * An example element.
@@ -35,12 +34,22 @@ export class PopupElement extends LitElement {
 
   protected overlay: Overlay;
 
+  private _open = false;
+
   @property({reflect: true, type: Boolean})
   public set open(value: boolean) {
-    this.overlay.open = value;
+    if (value) {
+      this.overlay.open();
+    } else if (!value) {
+      this.overlay.close();
+    }
+    const oldOpen = this._open;
+    this._open = this.overlay.isOpen;
+    this.requestUpdate('open', oldOpen);
   }
+
   public get open(): boolean {
-    return this.overlay.open;
+    return this._open;
   }
 
   @property({reflect: true, type: String, attribute: 'trigger-on'})
@@ -57,8 +66,6 @@ export class PopupElement extends LitElement {
 
   @query('#content')
   protected contentContainer!: HTMLSlotElement;
-
-  protected content?: HTMLElement;
 
   protected popper?: Instance;
 
@@ -115,9 +122,7 @@ export class PopupElement extends LitElement {
 
       requires: ['computeStyles'],
     };
-
-    // @ts-ignore
-    const reference = ev.detail.trigger.target.assignedElements()[0];
+    const reference = this.triggerContainer.assignedElements()[0];
 
     this.popper = createPopper(reference, this.overlay.overlayContainer, {
       placement: 'bottom',
@@ -131,6 +136,7 @@ export class PopupElement extends LitElement {
         attribModifier,
       ],
     });
+    this.open = true;
   };
 
   protected onOverlayClosed = () => {
@@ -138,6 +144,7 @@ export class PopupElement extends LitElement {
       this.popper.destroy();
       this.popper = undefined;
     }
+    this.open = false;
   };
 
   protected getArrow = (content?: HTMLElement): HTMLElement | undefined => {
