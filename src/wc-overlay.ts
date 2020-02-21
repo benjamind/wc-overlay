@@ -5,50 +5,49 @@ import {
   property,
   css,
   query,
+  PropertyValues,
 } from 'lit-element';
-import {createOverlay, Overlay} from './lib/create-overlay';
+import {Overlay, OverlayContentRequestEvent} from './lib/create-overlay';
 
 /**
- * An example element.
+ * An element which can hoist the content given to its slots to another location within the dom.
  *
- * @slot - This element has a slot
- * @csspart button - The button
+ * @slot [mask] - The mask slot content will be shown in the overlay below the other content
+ * @slot - The general content slot will accept a single element to move into the overlay content
  */
 @customElement('wc-overlay')
-export class LitOverlay extends LitElement {
+export class OverlayElement extends LitElement {
   static styles = css`
     :host {
       display: contents;
     }
-    #content {
+    #content,
+    #mask {
       display: none;
     }
   `;
 
-  private _open = false;
+  protected overlay: Overlay;
 
   @property({reflect: true, type: Boolean})
   public set open(value: boolean) {
-    if (!this._open && value) {
-      this.openOverlay();
-    } else if (this.open && !value) {
-      this.closeOverlay();
-    }
-
-    this._open = value;
+    this.overlay.open = value;
   }
   public get open(): boolean {
-    return this._open;
+    return this.overlay.open;
   }
 
-  @property({reflect: true, type: String, attribute: 'trigger-on'})
-  public triggerOn?: string;
+  @property({reflect: true, attribute: 'trigger-on'})
+  public triggerOn = 'click';
 
-  @property({reflect: true, type: String, attribute: 'trigger-off'})
+  @property({reflect: true, attribute: 'trigger-off'})
   public triggerOff?: string;
 
-  @property({reflect: true, type: String, attribute: 'close-on'})
+  @property({reflect: true, attribute: 'close-on'})
   public closeOn?: string;
+
+  @property({reflect: true, attribute: 'mask-close-on'})
+  public maskCloseOn = 'click';
 
   @query('#trig')
   protected triggerContainer!: HTMLSlotElement;
@@ -56,128 +55,65 @@ export class LitOverlay extends LitElement {
   @query('#content')
   protected contentContainer!: HTMLSlotElement;
 
-  protected overlay?: Overlay;
-  protected triggerEvent?: Event;
-  protected pointerOverOverlay = false;
-  protected pendingClose = false;
+  @query('#mask')
+  protected maskContainer!: HTMLSlotElement;
 
   public render() {
     return html`
       <slot name="trigger" id="trig"></slot>
       <slot id="content"></slot>
+      <slot name="mask" id="mask"></slot>
     `;
   }
 
-  public firstUpdated() {
-    if (this.triggerOn) {
-      this.triggerContainer.addEventListener(this.triggerOn, this.onTriggerOn);
-    }
-    if (this.triggerOff) {
-      this.triggerContainer.addEventListener(
-        this.triggerOff,
-        this.onTriggerOff
+  public constructor() {
+    super();
+    this.overlay = new Overlay();
+    this.overlay.addEventListener(
+      'wc-overlay-content',
+      this.handleContentRequest
+    );
+  }
+
+  public updated(changedProperties: PropertyValues): void {
+    super.updated(changedProperties);
+
+    if (
+      changedProperties.has('triggerOn') ||
+      changedProperties.has('triggerOff')
+    ) {
+      this.overlay.setTrigger(
+        this.triggerContainer,
+        this.triggerOn,
+        this.triggerOff
       );
     }
   }
 
-  private onTriggerOn = (ev: Event) => {
-    if (this.open) {
-      return;
-    }
-    this.triggerEvent = ev;
-    this.open = true;
-  };
+  private handleContentRequest = (evt: Event) => {
+    const requestEvent = evt as OverlayContentRequestEvent;
 
-  private pointerRemainsInOverlay(ev: PointerEvent) {
-    if (
-      ev.relatedTarget === this.overlay?.content &&
-      ev.target === this.triggerContainer
-    ) {
-      return true;
-    }
-    if (
-      ev.target === this.overlay?.content &&
-      ev.relatedTarget === this.triggerContainer
-    ) {
-      return true;
-    }
-    return false;
-  }
+    const maskContent = this.extractSlotContent(this.maskContainer);
 
-  private onTriggerOff = (ev: Event) => {
-    // if we're not open, or the event was already handled by the on trigger, do nothing
-    if (!this.open || ev === this.triggerEvent) {
-      return;
-    }
-    if (
-      (ev.type === 'pointerleave' || ev.type === 'pointerout') &&
-      this.pointerRemainsInOverlay(ev as PointerEvent)
-    ) {
-      // special case, if this is a pointer out style event
-      // and we're moving from overlay to target or vice versa
-      // then we didn't 'leave'
-
-      return;
-    } else {
-      this.triggerEvent = ev;
-      this.open = false;
-    }
-  };
-
-  protected createOverlay(content: HTMLElement): Overlay | undefined {
-    return createOverlay(this, {
-      triggerEvent: this.triggerEvent,
-      content,
-      target: document.body,
-    });
-  }
-
-  protected openOverlay() {
-    const content = this.extractSlotContent(this.contentContainer);
-    if (!content) {
-      // can't open an overlay with no content
-      this.open = false;
-      return;
-    }
-
-    this.overlay = this.createOverlay(content);
-
-    if (!this.overlay) {
-      // failed to open the overlay
-      this.open = false;
-      return;
-    }
-
-    // if this popup is responsive to pointer in/out state, add it to the
-    // the overlay content too so we can mouse over into popups
-    if (
-      this.triggerOff === 'pointerleave' ||
-      this.triggerOff === 'pointerout'
-    ) {
-      this.overlay.content.addEventListener(this.triggerOff, this.onTriggerOff);
-    }
-
-    if (this.closeOn) {
-      this.overlay.content.addEventListener(
-        this.closeOn,
+    if (maskContent && this.maskCloseOn) {
+      maskContent.addEventListener(
+        this.maskCloseOn,
         () => {
-          this.open = false;
+          this.overlay.open = false;
         },
         {once: true}
       );
     }
-  }
 
-  protected closeOverlay() {
-    if (this.overlay) {
-      this.overlay.close();
-      this.triggerEvent = undefined;
-      this.overlay = undefined;
-    }
-  }
+    requestEvent.detail.content = [
+      maskContent,
+      this.extractSlotContent(this.contentContainer),
+    ];
+    requestEvent.detail.closeOn = this.closeOn;
+  };
 
-  private extractSlotContent(slot: HTMLSlotElement): HTMLElement | null {
-    const nodes = slot.assignedNodes();
+  protected extractSlotContent = (slot: HTMLSlotElement): HTMLElement => {
+    const nodes = slot.assignedNodes({flatten: true});
     const elements = nodes.filter(
       (node) => node instanceof HTMLElement
     ) as HTMLElement[];
@@ -185,13 +121,12 @@ export class LitOverlay extends LitElement {
     if (elements.length) {
       return elements[0];
     }
-
-    return null;
-  }
+    throw new Error('No slotted content');
+  };
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'wc-overlay': LitOverlay;
+    'wc-overlay': OverlayElement;
   }
 }

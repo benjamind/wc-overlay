@@ -1,7 +1,20 @@
-import {customElement} from 'lit-element';
+import {
+  customElement,
+  html,
+  LitElement,
+  css,
+  property,
+  query,
+  PropertyValues,
+} from 'lit-element';
 
-import {createPopupOverlay} from './lib/create-popup';
-import {LitOverlay} from './wc-overlay';
+//import { PopupOverlay } from './lib/create-popup';
+import {
+  Overlay,
+  OverlayContentRequestEvent,
+  OverlayOpenEvent,
+} from './lib/create-overlay';
+import {createPopper, Instance, Modifier, State} from '@popperjs/core';
 
 /**
  * An example element.
@@ -10,28 +23,172 @@ import {LitOverlay} from './wc-overlay';
  * @csspart button - The button
  */
 @customElement('wc-popup')
-export class LitPopup extends LitOverlay {
-  public triggerOn?: string = 'pointerenter';
-  public triggerOff?: string = 'pointerleave';
+export class PopupElement extends LitElement {
+  static styles = css`
+    :host {
+      display: contents;
+    }
+    #content {
+      display: none;
+    }
+  `;
 
-  protected createOverlay(content: HTMLElement) {
-    const overlay = createPopupOverlay(this, {
-      relativeTo: this.triggerContainer.assignedNodes()[0] as HTMLElement,
-      overlay: {
-        triggerEvent: this.triggerEvent,
-        content,
-        target: document.body,
-      },
-      popper: {
-        placement: 'bottom',
-      },
-    });
-    return overlay;
+  protected overlay: Overlay;
+
+  @property({reflect: true, type: Boolean})
+  public set open(value: boolean) {
+    this.overlay.open = value;
   }
+  public get open(): boolean {
+    return this.overlay.open;
+  }
+
+  @property({reflect: true, type: String, attribute: 'trigger-on'})
+  public triggerOn = 'pointerenter';
+
+  @property({reflect: true, type: String, attribute: 'trigger-off'})
+  public triggerOff? = 'pointerleave';
+
+  @property({reflect: true, type: String, attribute: 'close-on'})
+  public closeOn?: string;
+
+  @query('#trig')
+  protected triggerContainer!: HTMLSlotElement;
+
+  @query('#content')
+  protected contentContainer!: HTMLSlotElement;
+
+  protected content?: HTMLElement;
+
+  protected popper?: Instance;
+
+  public render() {
+    return html`
+      <slot name="trigger" id="trig"></slot>
+      <slot id="content"></slot>
+    `;
+  }
+
+  public constructor() {
+    super();
+    this.overlay = new Overlay();
+    this.overlay.overlayContainer.style.display = 'block';
+    this.overlay.addEventListener(
+      'wc-overlay-content',
+      this.handleContentRequest
+    );
+    this.overlay.addEventListener('wc-overlay-opened', this.onOverlayOpen);
+    this.overlay.addEventListener('wc-overlay-closed', this.onOverlayClosed);
+  }
+
+  private handleContentRequest = (evt: Event) => {
+    const requestEvent = evt as OverlayContentRequestEvent;
+    requestEvent.detail.content = this.getPopupContent();
+    requestEvent.detail.closeOn = this.closeOn;
+  };
+
+  protected onOverlayOpen = (ev: Event) => {
+    const overlayOpenEvent = ev as OverlayOpenEvent;
+    const content = overlayOpenEvent.detail.content;
+    const attribModifier: Modifier<{content: HTMLElement}> = {
+      name: 'attribModifier',
+      enabled: true,
+      phase: 'write',
+      options: {
+        content,
+      },
+      // main function applies placement attribute to content
+      fn: ({state, options}) => {
+        if (options.content && state.placement) {
+          options.content.setAttribute('placement', state.placement);
+        }
+        return undefined;
+      },
+      // effect removes the attribute
+      effect: ({state, options}) => {
+        return () => {
+          if (options.content && state.placement) {
+            options.content.removeAttribute('placement');
+          }
+        };
+      },
+
+      requires: ['computeStyles'],
+    };
+
+    // @ts-ignore
+    const reference = ev.detail.trigger.target.assignedElements()[0];
+
+    this.popper = createPopper(reference, this.overlay.overlayContainer, {
+      placement: 'bottom',
+      modifiers: [
+        {
+          name: 'arrow',
+          options: {
+            element: this.getArrow(content),
+          },
+        },
+        attribModifier,
+      ],
+    });
+  };
+
+  protected onOverlayClosed = () => {
+    if (this.popper) {
+      this.popper.destroy();
+      this.popper = undefined;
+    }
+  };
+
+  protected getArrow = (content?: HTMLElement): HTMLElement | undefined => {
+    if (content) {
+      const possibleArrow = content as HTMLElement & {arrow: HTMLElement};
+      return possibleArrow.arrow;
+    }
+    return undefined;
+  };
+
+  protected getPopupContent = (): HTMLElement => {
+    const content = this.extractSlotContent();
+    if (content) {
+      return content;
+    }
+
+    throw new Error('No slotted content!');
+  };
+
+  public updated(changedProperties: PropertyValues): void {
+    super.updated(changedProperties);
+
+    if (
+      changedProperties.has('triggerOn') ||
+      changedProperties.has('triggerOff')
+    ) {
+      this.overlay.setTrigger(
+        this.triggerContainer,
+        this.triggerOn,
+        this.triggerOff
+      );
+    }
+  }
+
+  protected extractSlotContent = (): HTMLElement | undefined => {
+    const slot = this.contentContainer;
+    const nodes = slot.assignedNodes({flatten: true});
+    const elements = nodes.filter(
+      (node) => node instanceof HTMLElement
+    ) as HTMLElement[];
+
+    if (elements.length) {
+      return elements[0];
+    }
+
+    return undefined;
+  };
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'wc-popup': LitPopup;
+    'wc-popup': PopupElement;
   }
 }

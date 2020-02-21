@@ -7,6 +7,7 @@
     <script type="module" src="../wc-overlay.js"></script>
     <script type="module" src="../wc-popup.js"></script>
     <script type="module" src="example-dialog.js"></script>
+    <script type="module" src="example-tooltip.js"></script>
     <style>
       #container {
         width: 300px;
@@ -22,12 +23,14 @@
         align-items: center;
         justify-content: center;
       }
+
       #header,
       #footer {
         background: #666;
         width: 300px;
         height: 50px;
       }
+
       #dialog {
         display: block;
         width: 300px;
@@ -36,12 +39,21 @@
         border: 1px solid #999;
         font-weight: bold;
       }
+
       #tooltip {
         background-color: beige;
         padding: 8px;
       }
+
+      #arrow {
+        width: 8px;
+        height: 8px;
+        background: black;
+        position: absolute;
+      }
     </style>
   </head>
+
   <body>
     <div id="container">
       <div id="header">
@@ -54,9 +66,13 @@
           close-on="dialog-close"
         >
           <example-dialog>A cool dialog widget </example-dialog>
+          <div
+            slot="mask"
+            style="background-color: rgba(0,0,0,0.3); position: absolute; top: 0; left: 0; right: 0; bottom: 0;"
+          ></div>
           <wc-popup slot="trigger">
             <button id="overlay-button" slot="trigger">Open Overlay</button>
-            <div id="tooltip">This is a really long tooltip</div>
+            <example-tooltip>This is a really long tooltip</example-tooltip>
           </wc-popup>
         </wc-overlay>
         Body content

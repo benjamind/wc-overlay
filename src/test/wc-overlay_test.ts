@@ -1,4 +1,4 @@
-import {LitOverlay} from '../wc-overlay.js';
+import { OverlayElement } from '../wc-overlay.js';
 // import {fixture, html} from '@open-wc/testing';
 
 const assert = chai.assert;
@@ -6,7 +6,7 @@ const assert = chai.assert;
 suite('wc-overlay', () => {
   test('is defined', () => {
     const el = document.createElement('wc-overlay');
-    assert.instanceOf(el, LitOverlay);
+    assert.instanceOf(el, OverlayElement);
   });
   /*
   test('renders with default values', async () => {
