@@ -10,9 +10,16 @@
     <script type="module" src="example-tooltip.js"></script>
     <style>
       #container {
-        width: 300px;
-        height: 300px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 200px;
         border: 1px solid black;
+        overflow: hidden;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 100px;
       }
 
       #body {
@@ -51,33 +58,51 @@
         background: black;
         position: absolute;
       }
+      #mask {
+        background-color: rgba(0, 0, 0, 0.3);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
     </style>
   </head>
 
   <body>
     <div id="container">
-      <div id="header">
-        Header
-      </div>
-      <div id="body">
-        <wc-overlay
-          trigger-on="click"
-          trigger-off="click"
-          close-on="dialog-close"
-        >
-          <example-dialog>A cool dialog widget </example-dialog>
-          <div
-            slot="mask"
-            style="background-color: rgba(0,0,0,0.3); position: absolute; top: 0; left: 0; right: 0; bottom: 0;"
-          ></div>
-          <wc-popup slot="trigger">
-            <button id="overlay-button" slot="trigger">Open Overlay</button>
-            <example-tooltip>This is a really long tooltip</example-tooltip>
-          </wc-popup>
-        </wc-overlay>
-        Body content
-      </div>
-      <div id="footer">Footer</div>
+      <!-- wc-overlay component handles the popup behavior for our dialog content -->
+      <wc-overlay
+        trigger-on="click"
+        trigger-off="click"
+        close-on="dialog-close"
+      >
+        <!-- we can wrap our button element with wc-popup to make our tooltip work -->
+        <wc-popup slot="trigger">
+          <button id="overlay-button" slot="trigger">Open Overlay</button>
+          <example-tooltip>
+            The time is...
+            <div id="time"></div>
+          </example-tooltip>
+        </wc-popup>
+
+        <!-- here's the content for our wc-overlay -->
+        <example-dialog>A cool dialog widget</example-dialog>
+
+        <!-- we can add masks too -->
+        <div slot="mask" id="mask"></div>
+      </wc-overlay>
+
+      <!-- all this from inside an area thats overflow hidden -->
+      Overflow Hidden
     </div>
+
+    <script>
+      // demonstrate that we can update the content in our tooltip dynamically
+      const t = document.querySelector('#time');
+      setInterval(() => {
+        t.innerHTML = new Date().toLocaleTimeString();
+      }, 1000);
+    </script>
   </body>
 </html>

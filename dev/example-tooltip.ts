@@ -10,14 +10,16 @@ export class ExampleTooltip extends LitElement {
   static styles = css`
     :host {
       display: block;
-    }
-    #content {
+      font-family: -apple-system, Helvetica Neue, Segoe UI, Roboto, Oxygen,
+        Ubuntu, Cantarell, Open Sans, sans-serif;
+      background: #333;
+      color: white;
+      font-weight: bold;
       padding: 4px 8px;
-      background: #fff;
-      color: #000;
       font-size: 13px;
       border-radius: 4px;
     }
+
     #arrow,
     #arrow::before {
       position: absolute;
@@ -29,7 +31,7 @@ export class ExampleTooltip extends LitElement {
     #arrow::before {
       content: '';
       transform: rotate(45deg);
-      background: #fff;
+      background: #333;
     }
 
     :host([placement^='top']) {
@@ -73,9 +75,7 @@ export class ExampleTooltip extends LitElement {
   public render() {
     return html`
       <div id="arrow"></div>
-      <div id="content">
-        <slot></slot>
-      </div>
+      <slot></slot>
     `;
   }
 }
