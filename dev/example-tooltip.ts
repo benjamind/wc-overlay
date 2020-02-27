@@ -1,10 +1,5 @@
 import {LitElement, html, customElement, css, property} from 'lit-element';
 
-/**
- * An example tooltip element.
- *
- * @slot - This element has a slot
- */
 @customElement('example-tooltip')
 export class ExampleTooltip extends LitElement {
   static styles = css`

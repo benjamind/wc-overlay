@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><wc-popup> ⌲ Examples ⌲ Tooltip</title>
+    <title><wc-overlay> ⌲ Examples ⌲ Popup</title>
     <link rel="stylesheet" href="../../docs.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Roboto+Mono">
     <link href="../../prism-okaidia.css" rel="stylesheet" />
@@ -27,13 +27,17 @@
     <div id="main-wrapper">
       <main>
         
-    <h1>Example: Tooltp Example</h1>
+    <h1>Example: Popup Example</h1>
     <section class="examples">
       <nav class="collection">
         <ul>
           
+                  <li class=selected>
+                    <a href="">Using wc-popup with a tooltip</a>
+                  </li>
+                
                   <li class=>
-                    <a href="../">A basic example</a>
+                    <a href="../">Using wc-overlay to show a dialog</a>
                   </li>
                 
         </ul>
@@ -44,10 +48,8 @@
   <div id="tooltip" role="tooltip">
       My tooltip
       <div id="arrow" data-popper-arrow></div>
-    </div>
-</wc-popup>
   </div>
-</section>
+</wc-popup>
 <style>
   #tooltip {
     background: #333;

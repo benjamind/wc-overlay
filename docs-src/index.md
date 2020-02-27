@@ -13,20 +13,42 @@ In `<wc-overlay>` we define an `overlay` as an element which appears above other
 
 ## <wc-overlay> usage
 
+<style>
+  #dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    font-size: 50px;
+    background-color: beige;
+    border: 1px solid black;
+  }
+
+  #mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+  }
+</style>
+
 <section class="columns">
   <div>
   
-`<wc-overlay>` can be used to hoist an element out of the current location in the DOM up to another location in the DOM (by default, `document.body`):
+`<wc-overlay>` can be used to hoist an element out of the current location in the DOM up to another location in the DOM (by default, `document.body`), it will also carry a mask element to lay behind your hoisted content:
 
 ```html
 <div style="overflow: hidden; width: 300px; height: 200px">
-  <wc-overlay trigger-on="click" close-on="click">
+  <wc-overlay trigger-on="click" close-on="click" mask-close-on="click">
     <button slot="trigger">Open Overlay</button>
-    <div
-      style="width: 500px; height: 500px; font-size: 50px; background-color: beige; border: 1px solid black"
-    >
-      Click me to close!
+    <div id="dialog">
+      Click me or the mask to close!
     </div>
+    <div slot="mask" id="mask"></div>
   </wc-overlay>
 </div>
 ```
@@ -37,11 +59,10 @@ In `<wc-overlay>` we define an `overlay` as an element which appears above other
   <div style="overflow: hidden; width: 300px; height: 200px">
     <wc-overlay trigger-on="click" close-on="click">
       <button slot="trigger">Open Overlay</button>
-      <div
-        style="width: 500px; height: 500px; font-size: 50px; background-color: beige; border: 1px solid black; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"
-      >
-        Click me to close!
+      <div id="dialog">
+        Click me or the mask to close!
       </div>
+      <div slot="mask" id="mask"></div>
     </wc-overlay>
   </div>
 
@@ -58,7 +79,10 @@ In `<wc-overlay>` we define an `overlay` as an element which appears above other
 ```html
 <wc-popup>
   <button slot="trigger">Open</button>
-  <div>My cool content on hover</div>
+  <div id="tooltip" role="tooltip">
+    My tooltip
+    <div id="arrow" data-popper-arrow></div>
+  </div>
 </wc-popup>
 ```
 
@@ -67,8 +91,52 @@ In `<wc-overlay>` we define an `overlay` as an element which appears above other
 
 <wc-popup>
   <button slot="trigger">Open</button>
-  <div>My cool content on hover</div>
+  <div id="tooltip" role="tooltip">
+      My tooltip
+      <div id="arrow" data-popper-arrow></div>
+    </div>
 </wc-popup>
 
   </div>
 </section>
+
+<style>
+  #tooltip {
+    background: #333;
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+
+  #arrow,
+  #arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    z-index: -1;
+  }
+
+  #arrow::before {
+    content: '';
+    transform: rotate(45deg);
+    background: #333;
+  }
+
+  #tooltip[placement^='top'] > #arrow {
+    bottom: -4px;
+  }
+
+  #tooltip[placement^='bottom'] > #arrow {
+    top: -4px;
+  }
+
+  #tooltip[placement^='left'] > #arrow {
+    right: -4px;
+  }
+
+  #tooltip[placement^='right'] > #arrow {
+    left: -4px;
+  }
+</style>

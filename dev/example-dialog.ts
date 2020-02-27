@@ -1,10 +1,5 @@
 import {LitElement, html, customElement, css} from 'lit-element';
 
-/**
- * An example dialog element.
- *
- * @slot - This element has a slot
- */
 @customElement('example-dialog')
 export class ExampleDialog extends LitElement {
   static styles = css`

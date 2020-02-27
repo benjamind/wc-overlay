@@ -3,7 +3,8 @@
   "tags": [
     {
       "name": "wc-overlay",
-      "description": "An example element.",
+      "path": "./src/wc-overlay.ts",
+      "description": "An element which can hoist the content given to its slots to another location within the dom.",
       "attributes": [
         {
           "name": "open",
@@ -11,7 +12,8 @@
         },
         {
           "name": "trigger-on",
-          "type": "string | undefined"
+          "type": "string",
+          "default": "\"click\""
         },
         {
           "name": "trigger-off",
@@ -20,6 +22,11 @@
         {
           "name": "close-on",
           "type": "string | undefined"
+        },
+        {
+          "name": "mask-close-on",
+          "type": "string",
+          "default": "\"click\""
         }
       ],
       "properties": [
@@ -31,7 +38,8 @@
         {
           "name": "triggerOn",
           "attribute": "trigger-on",
-          "type": "string | undefined"
+          "type": "string",
+          "default": "\"click\""
         },
         {
           "name": "triggerOff",
@@ -42,23 +50,28 @@
           "name": "closeOn",
           "attribute": "close-on",
           "type": "string | undefined"
+        },
+        {
+          "name": "maskCloseOn",
+          "attribute": "mask-close-on",
+          "type": "string",
+          "default": "\"click\""
         }
       ],
       "slots": [
         {
-          "name": "",
-          "description": "This element has a slot"
-        }
-      ],
-      "cssParts": [
+          "name": "mask",
+          "description": "The mask slot content will be shown in the overlay below the other content"
+        },
         {
-          "name": "button",
-          "description": "The button"
+          "name": "",
+          "description": "The general content slot will accept a single element to move into the overlay content"
         }
       ]
     },
     {
       "name": "wc-popup",
+      "path": "./src/wc-popup.ts",
       "description": "An example element.",
       "attributes": [
         {
@@ -67,7 +80,7 @@
         },
         {
           "name": "trigger-on",
-          "type": "string | undefined",
+          "type": "string",
           "default": "\"pointerenter\""
         },
         {
@@ -89,7 +102,7 @@
         {
           "name": "triggerOn",
           "attribute": "trigger-on",
-          "type": "string | undefined",
+          "type": "string",
           "default": "\"pointerenter\""
         },
         {

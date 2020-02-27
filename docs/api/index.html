@@ -31,7 +31,7 @@
       
         <h2>&lt;wc-overlay></h2>
         <div>
-          An example element.
+          An element which can hoist the content given to its slots to another location within the dom.
         </div>
         
     <h3>Attributes</h3>
@@ -45,7 +45,7 @@
         </tr>
       
         <tr>
-          <td>trigger-on</td><td>undefined</td><td>string | undefined</td><td>undefined</td>
+          <td>trigger-on</td><td>undefined</td><td>string</td><td>"click"</td>
         </tr>
       
         <tr>
@@ -54,6 +54,10 @@
       
         <tr>
           <td>close-on</td><td>undefined</td><td>string | undefined</td><td>undefined</td>
+        </tr>
+      
+        <tr>
+          <td>mask-close-on</td><td>undefined</td><td>string</td><td>"click"</td>
         </tr>
       
     </table>
@@ -70,7 +74,7 @@
         </tr>
       
         <tr>
-          <td>triggerOn</td><td>trigger-on</td><td>undefined</td><td>string | undefined</td><td>undefined</td>
+          <td>triggerOn</td><td>trigger-on</td><td>undefined</td><td>string</td><td>"click"</td>
         </tr>
       
         <tr>
@@ -79,6 +83,10 @@
       
         <tr>
           <td>closeOn</td><td>close-on</td><td>undefined</td><td>string | undefined</td><td>undefined</td>
+        </tr>
+      
+        <tr>
+          <td>maskCloseOn</td><td>mask-close-on</td><td>undefined</td><td>string</td><td>"click"</td>
         </tr>
       
     </table>
@@ -93,24 +101,16 @@
       </tr>
       
         <tr>
-          <td></td><td>This element has a slot</td>
+          <td>mask</td><td>The mask slot content will be shown in the overlay below the other content</td>
+        </tr>
+      
+        <tr>
+          <td></td><td>The general content slot will accept a single element to move into the overlay content</td>
         </tr>
       
     </table>
     
         
-    <h3>CSS Shadow Parts</h3>
-    <table>
-      <tr>
-        <th>Name</th><th>Description</th>
-      </tr>
-      
-        <tr>
-          <td>button</td><td>The button</td>
-        </tr>
-      
-    </table>
-  
         
         
         <h2>&lt;wc-popup></h2>
@@ -129,7 +129,7 @@
         </tr>
       
         <tr>
-          <td>trigger-on</td><td>undefined</td><td>string | undefined</td><td>"pointerenter"</td>
+          <td>trigger-on</td><td>undefined</td><td>string</td><td>"pointerenter"</td>
         </tr>
       
         <tr>
@@ -154,7 +154,7 @@
         </tr>
       
         <tr>
-          <td>triggerOn</td><td>trigger-on</td><td>undefined</td><td>string | undefined</td><td>"pointerenter"</td>
+          <td>triggerOn</td><td>trigger-on</td><td>undefined</td><td>string</td><td>"pointerenter"</td>
         </tr>
       
         <tr>

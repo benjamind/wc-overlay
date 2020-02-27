@@ -31,20 +31,41 @@
 <p>A common problem in ShadowDOM is that of encapsulation of displayed content. Say you have a dialog, its size is set such that it does not allow overflow of content, but you want custom tooltips on elements inside the dialog, and you want these to correctly escape the containment of the dialog. <code>&lt;wc-popup&gt;</code> and the <code>createPopup</code> function help solve this problem.</p>
 <p>In <code>&lt;wc-overlay&gt;</code> we define an <code>overlay</code> as an element which appears above other DOM, potentially being hoisted up through the DOM to some layer where it should be displayed. This is the base building block of the library. We define a <code>popup</code> as an overlay, but with the added functionality of positioning said overlay relative to some other element. To achieve this <code>&lt;wc-overlay&gt;</code> uses the <a href="https://popper.js.org/"><code>popper.js</code></a> library.</p>
 <h2><wc-overlay> usage</h2>
+<style>
+  #dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    font-size: 50px;
+    background-color: beige;
+    border: 1px solid black;
+  }
+
+  #mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+  }
+</style>
 <section class="columns">
   <div>
-<p><code>&lt;wc-overlay&gt;</code> can be used to hoist an element out of the current location in the DOM up to another location in the DOM (by default, <code>document.body</code>):</p>
-<pre class="language-html"><code class="language-html"><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token style-attr language-css"><span class="token attr-name"> <span class="token attr-name">style</span></span><span class="token punctuation">="</span><span class="token attr-value"><span class="token property">overflow</span><span class="token punctuation">:</span> hidden<span class="token punctuation">;</span> <span class="token property">width</span><span class="token punctuation">:</span> 300px<span class="token punctuation">;</span> <span class="token property">height</span><span class="token punctuation">:</span> 200px</span><span class="token punctuation">"</span></span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>wc-overlay</span> <span class="token attr-name">trigger-on</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>click<span class="token punctuation">"</span></span> <span class="token attr-name">close-on</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>click<span class="token punctuation">"</span></span><span class="token punctuation">></span></span></span><br><span class="highlight-line">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>trigger<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Open Overlay<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token style-attr language-css"><span class="token attr-name"><br>      <span class="token attr-name">style</span></span><span class="token punctuation">="</span><span class="token attr-value"><span class="token property">width</span><span class="token punctuation">:</span> 500px<span class="token punctuation">;</span> <span class="token property">height</span><span class="token punctuation">:</span> 500px<span class="token punctuation">;</span> <span class="token property">font-size</span><span class="token punctuation">:</span> 50px<span class="token punctuation">;</span> <span class="token property">background-color</span><span class="token punctuation">:</span> beige<span class="token punctuation">;</span> <span class="token property">border</span><span class="token punctuation">:</span> 1px solid black</span><span class="token punctuation">"</span></span><br>    <span class="token punctuation">></span></span><br><span class="highlight-line">      Click me to close!</span><br><span class="highlight-line">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>wc-overlay</span><span class="token punctuation">></span></span></span><br><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span></code></pre>
+<p><code>&lt;wc-overlay&gt;</code> can be used to hoist an element out of the current location in the DOM up to another location in the DOM (by default, <code>document.body</code>), it will also carry a mask element to lay behind your hoisted content:</p>
+<pre class="language-html"><code class="language-html"><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token style-attr language-css"><span class="token attr-name"> <span class="token attr-name">style</span></span><span class="token punctuation">="</span><span class="token attr-value"><span class="token property">overflow</span><span class="token punctuation">:</span> hidden<span class="token punctuation">;</span> <span class="token property">width</span><span class="token punctuation">:</span> 300px<span class="token punctuation">;</span> <span class="token property">height</span><span class="token punctuation">:</span> 200px</span><span class="token punctuation">"</span></span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>wc-overlay</span> <span class="token attr-name">trigger-on</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>click<span class="token punctuation">"</span></span> <span class="token attr-name">close-on</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>click<span class="token punctuation">"</span></span> <span class="token attr-name">mask-close-on</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>click<span class="token punctuation">"</span></span><span class="token punctuation">></span></span></span><br><span class="highlight-line">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>trigger<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Open Overlay<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>dialog<span class="token punctuation">"</span></span><span class="token punctuation">></span></span></span><br><span class="highlight-line">      Click me or the mask to close!</span><br><span class="highlight-line">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>mask<span class="token punctuation">"</span></span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>mask<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>wc-overlay</span><span class="token punctuation">></span></span></span><br><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span></code></pre>
   </div>
   <div>
   <div style="overflow: hidden; width: 300px; height: 200px">
     <wc-overlay trigger-on="click" close-on="click">
       <button slot="trigger">Open Overlay</button>
-      <div
-        style="width: 500px; height: 500px; font-size: 50px; background-color: beige; border: 1px solid black; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"
-      >
-        Click me to close!
+      <div id="dialog">
+        Click me or the mask to close!
       </div>
+      <div slot="mask" id="mask"></div>
     </wc-overlay>
   </div>
   </div>
@@ -53,15 +74,58 @@
 <section class="columns">
   <div>
 <p><code>&lt;wc-popup&gt;</code> can be used to show a popup when a trigger element emits a specific event, by default it uses <code>pointerenter</code> and <code>pointerleave</code> to create hover popup behavior:</p>
-<pre class="language-html"><code class="language-html"><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>wc-popup</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>trigger<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Open<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">></span></span>My cool content on hover<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span><br><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>wc-popup</span><span class="token punctuation">></span></span></span></code></pre>
+<pre class="language-html"><code class="language-html"><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>wc-popup</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>trigger<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Open<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>tooltip<span class="token punctuation">"</span></span> <span class="token attr-name">role</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>tooltip<span class="token punctuation">"</span></span><span class="token punctuation">></span></span></span><br><span class="highlight-line">    My tooltip</span><br><span class="highlight-line">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>arrow<span class="token punctuation">"</span></span> <span class="token attr-name">data-popper-arrow</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span><br><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>wc-popup</span><span class="token punctuation">></span></span></span></code></pre>
   </div>
   <div>
 <wc-popup>
   <button slot="trigger">Open</button>
-  <div>My cool content on hover</div>
+  <div id="tooltip" role="tooltip">
+      My tooltip
+      <div id="arrow" data-popper-arrow></div>
+    </div>
 </wc-popup>
   </div>
 </section>
+<style>
+  #tooltip {
+    background: #333;
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+
+  #arrow,
+  #arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    z-index: -1;
+  }
+
+  #arrow::before {
+    content: '';
+    transform: rotate(45deg);
+    background: #333;
+  }
+
+  #tooltip[placement^='top'] > #arrow {
+    bottom: -4px;
+  }
+
+  #tooltip[placement^='bottom'] > #arrow {
+    top: -4px;
+  }
+
+  #tooltip[placement^='left'] > #arrow {
+    right: -4px;
+  }
+
+  #tooltip[placement^='right'] > #arrow {
+    left: -4px;
+  }
+</style>
 
       </main>
     </div>
