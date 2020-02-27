@@ -42,15 +42,13 @@ In `<wc-overlay>` we define an `overlay` as an element which appears above other
 `<wc-overlay>` can be used to hoist an element out of the current location in the DOM up to another location in the DOM (by default, `document.body`), it will also carry a mask element to lay behind your hoisted content:
 
 ```html
-<div style="overflow: hidden; width: 300px; height: 200px">
-  <wc-overlay trigger-on="click" close-on="click" mask-close-on="click">
-    <button slot="trigger">Open Overlay</button>
-    <div id="dialog">
-      Click me or the mask to close!
-    </div>
-    <div slot="mask" id="mask"></div>
-  </wc-overlay>
-</div>
+<wc-overlay trigger-on="click" close-on="click" mask-close-on="click">
+  <button slot="trigger">Open Overlay</button>
+  <div id="dialog">
+    Click me or the mask to close!
+  </div>
+  <div slot="mask" id="mask"></div>
+</wc-overlay>
 ```
 
   </div>
