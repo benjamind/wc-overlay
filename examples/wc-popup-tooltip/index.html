@@ -1,0 +1,109 @@
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><wc-overlay> ⌲ Examples ⌲ Popup</title>
+    <link rel="stylesheet" href="../../docs.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Roboto+Mono">
+    <link href="../../prism-okaidia.css" rel="stylesheet" />
+    <script type="module" src="../../wc-overlay.bundled.js"></script>
+  </head>
+  <body>
+    
+<header>
+  <h1>&lt;wc-overlay></h1>
+  <h2>Overlays and popups for web components</h2>
+</header>
+    
+<nav>
+  <a href="../../">Home</a>
+  <a href="../">Examples</a>
+  <a href="../../api/">API</a>
+  <a href="../../install/">Install</a>
+</nav>
+    <div id="main-wrapper">
+      <main>
+        
+    <h1>Example: Popup Example</h1>
+    <section class="examples">
+      <nav class="collection">
+        <ul>
+          
+                  <li class=selected>
+                    <a href="">Using wc-popup with a tooltip</a>
+                  </li>
+                
+                  <li class=>
+                    <a href="../">Using wc-overlay to show a dialog</a>
+                  </li>
+                
+        </ul>
+      </nav>
+      <div>
+        <wc-popup>
+  <button slot="trigger">Open</button>
+  <div id="tooltip" role="tooltip">
+      My tooltip
+      <div id="arrow" data-popper-arrow></div>
+  </div>
+</wc-popup>
+<style>
+  #tooltip {
+    background: #333;
+    color: white;
+    font-weight: bold;
+    padding: 4px 8px;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+
+  #arrow,
+  #arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    z-index: -1;
+  }
+
+  #arrow::before {
+    content: '';
+    transform: rotate(45deg);
+    background: #333;
+  }
+
+  #tooltip[placement^='top'] > #arrow {
+    bottom: -4px;
+  }
+
+  #tooltip[placement^='bottom'] > #arrow {
+    top: -4px;
+  }
+
+  #tooltip[placement^='left'] > #arrow {
+    right: -4px;
+  }
+
+  #tooltip[placement^='right'] > #arrow {
+    left: -4px;
+  }
+</style>
+<h3>HTML</h3>
+<pre class="language-html"><code class="language-html"><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>wc-popup</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>trigger<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Open<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>tooltip<span class="token punctuation">"</span></span> <span class="token attr-name">role</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>tooltip<span class="token punctuation">"</span></span><span class="token punctuation">></span></span></span><br><span class="highlight-line">    My tooltip</span><br><span class="highlight-line">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>arrow<span class="token punctuation">"</span></span> <span class="token attr-name">data-popper-arrow</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span><br><span class="highlight-line">  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span></span><br><span class="highlight-line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>wc-popup</span><span class="token punctuation">></span></span></span></code></pre>
+
+      </div>
+    </section>
+  
+      </main>
+    </div>
+    
+<footer>
+  <p>
+    Made with
+    <a href="https://github.com/PolymerLabs/lit-element-starter-ts">lit-element-starter-ts</a>
+  </p>
+</footer>
+  </body>
+</html>
