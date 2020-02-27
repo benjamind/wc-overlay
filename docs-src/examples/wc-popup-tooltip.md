@@ -6,14 +6,6 @@ name: Popup Example
 description: Using wc-popup with a tooltip
 ---
 
-<wc-popup>
-  <button slot="trigger">Open</button>
-  <div id="tooltip" role="tooltip">
-      My tooltip
-      <div id="arrow" data-popper-arrow></div>
-  </div>
-</wc-popup>
-
 <style>
   #tooltip {
     background: #333;
@@ -54,6 +46,14 @@ description: Using wc-popup with a tooltip
     left: -4px;
   }
 </style>
+
+<wc-popup>
+  <button slot="trigger">Open</button>
+  <div id="tooltip" role="tooltip">
+      My tooltip
+      <div id="arrow" data-popper-arrow></div>
+  </div>
+</wc-popup>
 
 <h3>HTML</h3>
 

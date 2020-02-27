@@ -18,7 +18,7 @@
     "docs:build": "rollup -c --file docs/wc-overlay.bundled.js",
     "docs:assets": "cp node_modules/prismjs/themes/prism-okaidia.css docs/",
     "docs:serve": "es-dev-server --root-dir=docs",
-    "deploy": "docs && gh-pages -d docs",
+    "deploy": "npm run docs && gh-pages -d docs",
     "analyze": "wca analyze \"src/**/*.ts\" --outFile custom-elements.json",
     "serve": "es-dev-server",
     "test": "karma start karma.conf.cjs",
