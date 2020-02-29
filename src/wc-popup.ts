@@ -11,9 +11,9 @@ import {
 import {
   Overlay,
   OverlayContentRequestEvent,
-  OverlayOpenEvent,
+  OverlayOpenedEvent,
 } from './lib/create-overlay';
-import {createPopper, Instance, Modifier} from '@popperjs/core';
+import {createPopper, Instance, Modifier, Options} from '@popperjs/core';
 
 /**
  * An example element.
@@ -52,14 +52,17 @@ export class PopupElement extends LitElement {
     return this._open;
   }
 
-  @property({reflect: true, type: String, attribute: 'trigger-on'})
+  @property({type: String, attribute: 'trigger-on'})
   public triggerOn = 'pointerenter';
 
-  @property({reflect: true, type: String, attribute: 'trigger-off'})
+  @property({type: String, attribute: 'trigger-off'})
   public triggerOff? = 'pointerleave';
 
-  @property({reflect: true, type: String, attribute: 'close-on'})
+  @property({type: String, attribute: 'close-on'})
   public closeOn?: string;
+
+  @property()
+  public placement: Options['placement'] = 'auto';
 
   @query('#trig')
   protected triggerContainer!: HTMLSlotElement;
@@ -84,7 +87,7 @@ export class PopupElement extends LitElement {
       'wc-overlay-content',
       this.handleContentRequest
     );
-    this.overlay.addEventListener('wc-overlay-opened', this.onOverlayOpen);
+    this.overlay.addEventListener('wc-overlay-opened', this.onOverlayOpened);
     this.overlay.addEventListener('wc-overlay-closed', this.onOverlayClosed);
   }
 
@@ -94,10 +97,12 @@ export class PopupElement extends LitElement {
     requestEvent.detail.closeOn = this.closeOn;
   };
 
-  protected onOverlayOpen = (ev: Event) => {
-    const overlayOpenEvent = ev as OverlayOpenEvent;
-    const content = overlayOpenEvent.detail.content;
-    const attribModifier: Modifier<{content: HTMLElement}> = {
+  protected onOverlayOpened = (ev: Event) => {
+    const overlayOpenedEvent = ev as OverlayOpenedEvent;
+    const content = overlayOpenedEvent.detail.content;
+    const attribModifier: Modifier<{
+      content: OverlayOpenedEvent['detail']['content'];
+    }> = {
       name: 'attribModifier',
       enabled: true,
       phase: 'write',
@@ -107,7 +112,9 @@ export class PopupElement extends LitElement {
       // main function applies placement attribute to content
       fn: ({state, options}) => {
         if (options.content && state.placement) {
-          options.content.setAttribute('placement', state.placement);
+          options.content.forEach((el) =>
+            el.setAttribute('placement', state.placement)
+          );
         }
         return undefined;
       },
@@ -115,17 +122,18 @@ export class PopupElement extends LitElement {
       effect: ({state, options}) => {
         return () => {
           if (options.content && state.placement) {
-            options.content.removeAttribute('placement');
+            options.content.forEach((el) => el.removeAttribute('placement'));
           }
         };
       },
 
       requires: ['computeStyles'],
     };
-    const reference = this.triggerContainer.assignedElements()[0];
+    const reference =
+      this.triggerContainer.assignedElements()[0] || this.parentElement;
 
     this.popper = createPopper(reference, this.overlay.overlayContainer, {
-      placement: 'bottom',
+      placement: this.placement,
       modifiers: [
         {
           name: 'arrow',
@@ -147,10 +155,12 @@ export class PopupElement extends LitElement {
     this.open = false;
   };
 
-  protected getArrow = (content?: HTMLElement): HTMLElement | undefined => {
+  protected getArrow = (content?: HTMLElement[]): HTMLElement | undefined => {
     if (content) {
-      const possibleArrow = content as HTMLElement & {arrow: HTMLElement};
-      return possibleArrow.arrow;
+      for (const el of content) {
+        const possibleArrow = el as HTMLElement & {arrow: HTMLElement};
+        return possibleArrow.arrow;
+      }
     }
     return undefined;
   };

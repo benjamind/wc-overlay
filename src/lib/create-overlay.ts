@@ -258,7 +258,12 @@ export class Overlay extends EventTarget {
     const overlayOpenedEvent: OverlayOpenedEvent = new CustomEvent(
       'wc-overlay-opened',
       {
-        detail: {content, overlay: this, trigger: this.triggerEvent!},
+        detail: {
+          container: this.overlayContainer,
+          content: contentElements,
+          overlay: this,
+          trigger: this.triggerEvent!,
+        },
       }
     );
     this.dispatchEvent(overlayOpenedEvent);
@@ -334,7 +339,8 @@ export type OverlayOpenEvent = CustomEvent<{
 }>;
 
 export type OverlayOpenedEvent = CustomEvent<{
-  content: HTMLElement | HTMLElement[] | undefined;
+  content: HTMLElement[] | undefined;
+  container: HTMLElement;
   overlay: Overlay;
   trigger: Event;
 }>;

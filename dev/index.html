@@ -9,6 +9,16 @@
     <script type="module" src="example-dialog.js"></script>
     <script type="module" src="example-tooltip.js"></script>
     <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      /* Hide flash of unstyled content */
+      wc-overlay:not(:defined) :not([slot='trigger']),
+      wc-popup:not(:defined) :not([slot='trigger']) {
+        display: none;
+      }
+
       #container {
         position: absolute;
         top: 50%;
@@ -18,8 +28,7 @@
         height: 200px;
         border: 1px solid black;
         overflow: hidden;
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 100px;
+        padding: 20px;
       }
 
       #body {
@@ -66,35 +75,89 @@
         right: 0;
         bottom: 0;
       }
+
+      h2 {
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        text-decoration: underline;
+      }
+
+      #whats-the-time {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+      }
+
+      #manual-trigger {
+        cursor: pointer;
+      }
     </style>
   </head>
 
   <body>
     <div id="container">
+      <!--
+        You can use wc-popup in any element, it uses display:contents to avoid
+        breaking your layout
+      -->
+      <h2>
+        wc-popup =
+        <wc-popup placement="right">
+          <span slot="trigger">❤</span>
+          <example-tooltip>
+            We can have popups on anything...and they don't affect layout!
+          </example-tooltip>
+        </wc-popup>
+      </h2>
+
+      <p>
+        This box has <code>overflow:hidden</code> applied, content should be
+        clipped.
+      </p>
+
+      <wc-popup id="manual" trigger-on="" trigger-off="" close-on="click">
+        <span slot="trigger" id="manual-trigger">👻</span>
+        <example-tooltip>
+          This popup is driven by setting the <code>open</code> property
+        </example-tooltip>
+      </wc-popup>
+
       <!-- wc-overlay component handles the popup behavior for our dialog content -->
-      <wc-overlay
-        trigger-on="click"
-        trigger-off="click"
-        close-on="dialog-close"
-      >
+      <wc-overlay close-on="dialog-close">
         <!-- we can wrap our button element with wc-popup to make our tooltip work -->
-        <wc-popup slot="trigger">
+        <wc-popup slot="trigger" placement="top">
           <button id="overlay-button" slot="trigger">Open Overlay</button>
           <example-tooltip>
-            The time is...
-            <div id="time"></div>
+            Wait...there's more?
           </example-tooltip>
         </wc-popup>
 
         <!-- here's the content for our wc-overlay -->
-        <example-dialog>A cool dialog widget</example-dialog>
+        <example-dialog>
+          <h3>Ta-da! &#x2660;</h3>
+          <p>
+            This dialog could have been defined anywhere in your DOM hierarchy,
+            but when opened it is hoisted up to a location elsewhere, probably
+            the <code>document.body</code> if you didn't handle the event.
+          </p>
+          <p>
+            Note the button below is even focused already, you can control the
+            query used to determine what content gets focus by using the
+            <code>focus-selector</code> attribute.
+          </p>
+        </example-dialog>
 
         <!-- we can add masks too -->
         <div slot="mask" id="mask"></div>
       </wc-overlay>
 
-      <!-- all this from inside an area thats overflow hidden -->
-      Overflow Hidden
+      <wc-popup placement="left">
+        <div id="whats-the-time" slot="trigger">⏰</div>
+        <example-tooltip>
+          <span>The time is... <span id="time"></span></span>
+        </example-tooltip>
+      </wc-popup>
     </div>
 
     <script>
@@ -103,6 +166,14 @@
       setInterval(() => {
         t.innerHTML = new Date().toLocaleTimeString();
       }, 1000);
+
+      // we can also drive overlay visibility imperatively
+      document
+        .querySelector('#manual-trigger')
+        .addEventListener('click', () => {
+          const manualOverlay = document.querySelector('#manual');
+          manualOverlay.open = !manualOverlay.open;
+        });
     </script>
   </body>
 </html>

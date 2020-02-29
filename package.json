@@ -16,6 +16,7 @@
     "docs:gen": "eleventy --config=.eleventy.cjs",
     "docs:gen:watch": "eleventy --config=.eleventy.cjs --watch",
     "docs:build": "rollup -c --file docs/wc-overlay.bundled.js",
+    "docs:build:watch": "rollup -c --file docs/wc-overlay.bundled.js --watch",
     "docs:assets": "cp node_modules/prismjs/themes/prism-okaidia.css docs/",
     "docs:serve": "es-dev-server --root-dir=docs",
     "deploy": "npm run docs && gh-pages -d docs",

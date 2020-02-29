@@ -34,7 +34,7 @@ header {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 360px;
+  height: 130px;
   margin: 0;
   background: linear-gradient(
     0deg,
@@ -165,4 +165,12 @@ th {
   border: solid 1px #aaa;
   padding: 4px;
   text-align: left;
+}
+
+wc-overlay:not(:defined) :not([slot='trigger']) {
+  display: none;
+}
+
+wc-popup:not(:defined) :not([slot='trigger']) {
+  display: none;
 }

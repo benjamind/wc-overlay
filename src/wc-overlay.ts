@@ -7,7 +7,11 @@ import {
   query,
   PropertyValues,
 } from 'lit-element';
-import {Overlay, OverlayContentRequestEvent} from './lib/create-overlay';
+import {
+  Overlay,
+  OverlayContentRequestEvent,
+  OverlayOpenedEvent,
+} from './lib/create-overlay';
 
 /**
  * An element which can hoist the content given to its slots to another location within the dom.
@@ -47,17 +51,20 @@ export class OverlayElement extends LitElement {
     return this._open;
   }
 
-  @property({reflect: true, attribute: 'trigger-on'})
+  @property({attribute: 'trigger-on'})
   public triggerOn = 'click';
 
-  @property({reflect: true, attribute: 'trigger-off'})
+  @property({attribute: 'trigger-off'})
   public triggerOff?: string;
 
-  @property({reflect: true, attribute: 'close-on'})
+  @property({attribute: 'close-on'})
   public closeOn?: string;
 
-  @property({reflect: true, attribute: 'mask-close-on'})
+  @property({attribute: 'mask-close-on'})
   public maskCloseOn = 'click';
+
+  @property({attribute: 'focus-selector'})
+  public focusSelector = '[tabIndex="-1"], [tabIndex="0"]';
 
   @query('#trig')
   protected triggerContainer!: HTMLSlotElement;
@@ -83,8 +90,21 @@ export class OverlayElement extends LitElement {
       'wc-overlay-content',
       this.handleContentRequest
     );
-    this.overlay.addEventListener('wc-overlay-opened', () => {
+    this.overlay.addEventListener('wc-overlay-opened', (ev: Event) => {
+      const event = ev as OverlayOpenedEvent;
+      if (!event.detail.container) {
+        return;
+      }
       this.open = true;
+      // if we have a focus selector, apply it and pass focus
+      if (this.focusSelector) {
+        const focusable = event.detail.container.querySelector<HTMLElement>(
+          this.focusSelector
+        );
+        if (focusable) {
+          focusable.focus();
+        }
+      }
     });
     this.overlay.addEventListener('wc-overlay-closed', () => {
       this.open = false;
